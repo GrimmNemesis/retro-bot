@@ -4,11 +4,13 @@ from discord.ext import commands
 import asyncio
 import time
 import random
+import discordtoken
 
 Client = discord.Client()
 client = commands.Bot(command_prefix = ",")
 lastmessage = None
 lastmessageuser = None
+admin_prefix = ',ADMINHELP'
 
 @client.event
 async def on_ready():
@@ -18,9 +20,10 @@ async def on_ready():
 async def on_message(message):
     userID = message.author.id
     channelID = message.channel.name
-    homosex = message.content
+    message_string = message.content
     global lastmessage
     global lastmessageuser
+    global admin_prefix
 
     if message.content.upper().startswith(",GRIMMALIVE"):
         await client.send_message(message.channel, "<@%s> Yes, Grimm is still alive. **Smh**" % (userID))
@@ -28,10 +31,10 @@ async def on_message(message):
         args = message.content.split(" ")
         await client.send_message(message.channel, "%s" % (" ".join(args[1:])))
     if not (lastmessage == message.content and lastmessageuser == userID):
-        if message.content.upper().startswith(',ADMINHELP'):
-            await client.send_message(client.get_channel('342772018980061184'), "<@%s> needs admin assistance in %s"
-                                      % (userID, channelID))
-    lastmessage = homosex
+        if message.content.upper().startswith(admin_prefix):
+            await client.send_message(client.get_channel('342772018980061184'), "@here <@%s> needs admin assistance in %s reason: %s"
+                                      % (userID, channelID, message_string.upper().replace(admin_prefix, '')))
+    lastmessage = message_string
     lastmessageuser = userID
     if message.content.upper().startswith(',QUOTES'):
         quotes = ["```'You can't call a 13-year-old a faggot! THAT'S RAPE' -Aaron 2018```",
@@ -43,4 +46,4 @@ async def on_message(message):
 
 
 
-client.run("Mzg4NDA2MDU2NjcxMjQ4Mzg0.DTkNpg.9eRFY6O3bFg2RyYWMqGvGZ2oSfg")
+client.run(discordtoken.token)
